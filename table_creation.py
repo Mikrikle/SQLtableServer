@@ -1,16 +1,17 @@
 import sqlite3
- 
-conn = sqlite3.connect("usersbase.db") 
+
+conn = sqlite3.connect("usersbase.db")
 cursor = conn.cursor()
- 
+
+
 def create():
-		# Создание таблицы  логин, почта, ФИО
-	cursor.execute("""CREATE TABLE users
+                # Создание таблицы  логин, почта, ФИО
+    cursor.execute("""CREATE TABLE users
 					  (name text, email text, password text)
 				   """)
 
-		# заполнение таблицы
-	cursor.execute("""INSERT INTO users
+    # заполнение таблицы
+    cursor.execute("""INSERT INTO users
 					  VALUES ('Jack', 'test@mail.ru', '12345'),
 					  ('Walter', 'rwerwer@mail.ru', 'rtf344'),
 					  ('Clyde', 'hgfhgft@mail.ru', 'qwerty12345'),
@@ -22,20 +23,20 @@ def create():
 					  ('Robert', 'tygyt@mail.ru', 'vsser234')
 					  """)
 
-		# Сохранить изменения
-	conn.commit()
+    # Сохранить изменения
+    conn.commit()
+
 
 try:
-	create()
+    create()
 except sqlite3.OperationalError:
-	print('Таблица уже создана!')
-
+    print('Таблица уже создана!')
 
 
 def clear():
-	cursor.execute("""DELETE FROM users
+    cursor.execute("""DELETE FROM users
 					WHERE login = "werwer";""")
-	conn.commit()
+    conn.commit()
 
 
 cursor.close()
