@@ -1,0 +1,89 @@
+﻿<!---->
+<!DOCTYPE html>
+
+<html lang="ru">
+<head>
+	<meta charset="utf-8" />
+	<title>Add</title>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<link rel="stylesheet" href="../css/main.css">
+	<link href="https://fonts.googleapis.com/css?family=Vollkorn+SC:600&display=swap&subset=cyrillic" rel="stylesheet">
+</head>
+<body>
+	<header>
+		<h1>Добавление пользователя</h1>
+		<hr />
+		<nav>
+			<a class="navigation non_active" href="/">&#9776;Главная&#9776;</a>
+			<a class="navigation non_active" href="/users">&#9776;Таблица&#9776;</a>
+			<a class="navigation active" href="/new_user">&#9776;Добавить ползьзователя&#9776;</a>
+		</nav>
+	</header>
+
+	<article>
+		<div class="section">
+			<div class="central">
+				<form method="post" action="" id="forma" name="">
+					<span class="data_name">Имя:</span>
+					<input class="data" id="name" onkeyup="checkParams()" type="text" placeholder="Введите имя" autocomplete="off" /><br>
+					<span class="data_name">Email:</span>
+					<input class="data" id="email" onkeyup="checkParams()" type="email" placeholder="Введите e-mail" autocomplete="off" /><br />
+					<span class="data_name">Пароль:</span>
+					<input class="data" id="pas" onkeyup="checkParams()" type="text" placeholder="Введите пароль" autocomplete="off" /><br />
+					<input class=".simple_btn" type="button" id="submit" value="Отправить" disabled>
+				</form>
+				<button id="users" onClick="location.href='/users'">Отмена</button>
+			</div>
+		</div>
+		<div class="section">
+			<div class="central">
+				<h2>&#9672;Правила&#9672;</h2>
+				<p class="rules">&#9672;Логин должен состоять более чем из 6 символов.</p>
+				<p class="rules">&#9672;Следите за правильностью ввода адреса электронной почты.</p>
+				<p class="rules">&#9672;имя фамилию и отчество вводите через пробел.</p>
+				<p class="rules"><sub> Строго соблюдайте правила!</sub></p>
+			</div>
+		</div>
+	</article>
+
+	<footer>
+		<div class="copy">&copy;Table</div>
+	</footer>
+
+	<script>
+		function checkParams() {
+			let name = $("#name").val();
+			let eml = $("#email").val();
+			let pas = $("#pas").val();
+
+			if (name.length > 3 && eml.length > 4 && pas.length > 3 && eml.indexOf("@") != -1) {
+				$('#submit').removeAttr('disabled');
+				$('#submit').addClass('okay');
+			} else {
+				$('#submit').attr('disabled', 'disabled');
+			}
+		}
+	</script>
+	<script>
+		"use strict";
+		$(document).ready(function () {
+			$("#submit").click(function () {
+				let name = $("#name").val();
+				let eml = $("#email").val();
+				let pas = $("#pas").val();
+				$.ajax({
+					url: "/api/new_user",
+					type: "POST",
+					dataType: "text",
+					data: ("name=" + name + "&email=" + eml + "&pas=" + pas),
+					success: function go() {
+						location.href = '/users';
+					}
+				});
+			});
+		});
+	</script>
+
+
+</body>
+</html>

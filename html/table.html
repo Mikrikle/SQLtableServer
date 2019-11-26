@@ -1,0 +1,43 @@
+﻿<!---->
+<!DOCTYPE html>
+
+<html lang="ru" >
+<head>
+	<meta charset="utf-8" />
+	<title>UsersT</title>
+	<link rel="stylesheet" href="../css/main.css">
+	<link href="https://fonts.googleapis.com/css?family=Vollkorn+SC:600&display=swap&subset=cyrillic" rel="stylesheet">
+</head>
+<body>
+	<header>
+		<h1>Таблица&#10000;</h1>
+		<hr />
+		<nav>
+			<a class="navigation non_active" href="/">&#9776;Главная&#9776;</a>
+			<a class="navigation active" href="/users">&#9776;Таблица&#9776;</a>
+			<a class="navigation non_active" href="/new_user">&#9776;Добавить ползьзователя&#9776;</a>
+		</nav>
+	</header>
+	<div class="section">
+		<div class="central">
+			<button type="submit" onClick="location.href='/new_user'">Добавить пользователя</button>
+		</div>
+		<table>
+			<colgroup>
+				<col span="3" style="background:LightCyan">
+			</colgroup>
+			<tr>
+				<th class="Table_head">Name</th>
+				<th class="Table_head">Email</th>
+				<th class="Table_head">Passsword</th>
+			</tr>
+			<tbody>
+				<!--place for SQL data-->
+			</tbody>
+		</table>
+	</div>
+	<footer>
+		<div class="copy">&copy;Table</div>
+	</footer>
+</body>
+</html>
