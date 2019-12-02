@@ -31,12 +31,5 @@ try:
     create()
 except sqlite3.OperationalError:
     print('Таблица уже создана!')
-
-
-def clear():
-    cursor.execute("""DELETE FROM users
-					WHERE login = "werwer";""")
-    conn.commit()
-
-
-cursor.close()
+finally:
+	cursor.close()
