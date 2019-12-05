@@ -25,6 +25,7 @@ def open_root_html():
 
 # table
 def table():
+    global conn
     with open('html/table.html', 'r', encoding='utf-8') as f:
         begin_table = ''
         end_table = ''
@@ -32,15 +33,13 @@ def table():
             begin_table += f.readline()
         for _ in range(8):
             end_table += f.readline()
-    conn = sqlite3.connect("usersbase.db")
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM users')
     for row in cursor:
         begin_table += '\t\t\t<tr>' + '<td>' + \
-            row[0] + '</td>' + '<td>' + row[1] + '</td>' + \
-            '<td>' + row[2] + '</td>' + '</tr>\n'
+            str(row[0]) + '</td>' + '<td>' + row[1] + '</td>' + \
+            '<td>' + row[2] + '</td>' + '<td>' + row[3] + '</td>' + '</tr>\n'
     cursor.close()
-    conn.close()
     html_table = begin_table + end_table
     return html_table
 
@@ -64,13 +63,12 @@ def generate_response(request):
         add_user(name, email, password)
 
     def add_user(name, email, password):
-        conn = sqlite3.connect("usersbase.db")
+        global conn
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO users VALUES (?, ?, ?)",
+        cursor.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
                        (name, email, password))
         conn.commit()
         cursor.close()
-        conn.close()
         print('< Добавлен новый пользователь >')
 
     # GET____________________________
@@ -130,4 +128,6 @@ def run():
 
 
 if __name__ == "__main__":
+    conn = sqlite3.connect("usersbase.db")
     run()
+    conn.close()
