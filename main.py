@@ -2,26 +2,15 @@ import sqlite3
 import socket
 
 
-# Add user
-def open_add_html():
-    with open('html/add_user.html', 'r', encoding='utf-8') as f:
-        html = f.read()
-    return html
+# files
+with open('html/add_user.html', 'r', encoding='utf-8') as f:
+    add_user_html = f.read()
 
+with open('css/main.css', 'r', encoding='utf-8') as f:
+    css = f.read()
 
-# css
-def open_css():
-    with open('css/main.css', 'r', encoding='utf-8') as f:
-        css = f.read()
-    return css
-
-
-# root
-def open_root_html():
-    with open('html/root.html', 'r', encoding='utf-8') as f:
-        html = f.read()
-    return html
-
+with open('html/root.html', 'r', encoding='utf-8') as f:
+    root_html = f.read()
 
 # table
 def table():
@@ -43,14 +32,14 @@ def table():
     html_table = begin_table + end_table
     return html_table
 
-
-def generate_response(request):
+# answer
+def generate_response(request, method, url):
         # url:body
     URLS = {
-        '/': open_root_html(),
+        '/': root_html,
         '/users': table(),
-        '/new_user': open_add_html(),
-        '/css/main.css': open_css(),
+        '/new_user': add_user_html,
+        '/css/main.css': css,
     }
     # API_____________________________
 
@@ -84,18 +73,7 @@ def generate_response(request):
         else:
             return(URLS[url])
 
-    # MAIN___________________________
-    def parse_request(request):
-        try:
-            parsed = request.split(' ')  # GET /users HTTP/1.1
-            method = parsed[0]
-            url = parsed[1]
-            return (method, url)
-        except:
-            return(None, None)
-
-    method, url = parse_request(request)
-
+    # HTTP___________________________
     if method == 'GET':
         headers, code = generate_headers(url)
         body = generate_content(code, url)
@@ -106,28 +84,39 @@ def generate_response(request):
     else:
         return('HTTP/1.1 405 Method not allowed\n\n<h1>405</h1><p>Method not allowed</p>').encode()
 
-
-def run():
-    serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-    serversocket.bind(('localhost', 5000))
-    serversocket.listen(5)
-    print('\t\t\t\t<--Сервер запущен-->')
-
-    while True:
-        client_socket, addr = serversocket.accept()
-        request = client_socket.recv(1024)
+def main():
+    def request_processing(request):
+        print(request)
         try:
-            response = generate_response(request.decode('utf-8'))
-            client_socket.sendall(response)
-            print('<--ОК-->', addr, end=' ')
-            print(request.decode('utf-8')[:4])
+            parsed = request.split(' ')
+            method = parsed[0]
+            url = parsed[1]
+            return generate_response(request, method, url)
         except:
-            print('<--ОШИБКА-->')
-        client_socket.close()
+            return generate_response(request, None, None)
+        
+    def run():
+        serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        serversocket.bind(('localhost', 5000))
+        serversocket.listen(5)
+        print('\t\t\t\t<--Сервер запущен-->')
+
+        while True:
+            client_socket, addr = serversocket.accept()
+            request = client_socket.recv(1024)
+            try:
+                response = request_processing(request.decode('utf-8'))
+                client_socket.sendall(response)
+                print('<--ОК-->', addr, end=' ')
+                print(request.decode('utf-8')[:4])
+            except:
+                print('<--ОШИБКА-->')
+            client_socket.close()
+    run()
 
 
 if __name__ == "__main__":
     conn = sqlite3.connect("usersbase.db")
-    run()
+    main()
     conn.close()
