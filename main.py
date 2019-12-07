@@ -18,15 +18,15 @@ def table():
     with open('html/table.html', 'r', encoding='utf-8') as f:
         begin_table = ''
         end_table = ''
-        for _ in range(35):
+        for _ in range(54):
             begin_table += f.readline()
-        for _ in range(8):
+        for _ in range(14):
             end_table += f.readline()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM users')
     for row in cursor:
-        begin_table += '\t\t\t<tr>' + '<td>' + \
-            str(row[0]) + '</td>' + '<td>' + row[1] + '</td>' + \
+        begin_table += '\t\t\t<tr>' + '<th scope="row" class="ids">' + \
+            str(row[0]) + '</th>' + '<td>' + row[1] + '</td>' + \
             '<td>' + row[2] + '</td>' + '<td>' + row[3] + '</td>' + '</tr>\n'
     cursor.close()
     html_table = begin_table + end_table
@@ -79,20 +79,26 @@ def generate_response(request, method, url):
         body = generate_content(code, url)
         return (headers + body).encode()
     elif method == 'POST' and url[:4] == '/api':
-        parse_post_newuser(request)
+        if url[4:] == '/add':
+            parse_post_newuser(request)
+        else:
+            print(url)
         return('HTTP/1.1 201 OK').encode()
     else:
         return('HTTP/1.1 405 Method not allowed\n\n<h1>405</h1><p>Method not allowed</p>').encode()
 
 def main():
     def request_processing(request):
-        print(request)
-        try:
+        #print(request)
+        if request != '':
             parsed = request.split(' ')
-            method = parsed[0]
-            url = parsed[1]
-            return generate_response(request, method, url)
-        except:
+            try:
+                method = parsed[0]
+                url = parsed[1]
+                return generate_response(request, method, url)
+            except:
+                return generate_response(request, None, None)
+        else:
             return generate_response(request, None, None)
         
     def run():
@@ -105,6 +111,7 @@ def main():
         while True:
             client_socket, addr = serversocket.accept()
             request = client_socket.recv(1024)
+            print(request)
             try:
                 response = request_processing(request.decode('utf-8'))
                 client_socket.sendall(response)

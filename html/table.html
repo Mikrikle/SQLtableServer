@@ -1,44 +1,66 @@
 ﻿<!---->
 <!DOCTYPE html>
 
-<html lang="ru" >
+<html lang="ru">
+
 <head>
-	<meta charset="utf-8" />
+	<!-- Required meta tags -->
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>UsersT</title>
 	<link rel="stylesheet" href="../css/main.css">
-	<link href="https://fonts.googleapis.com/css?family=Vollkorn+SC:600&display=swap&subset=cyrillic" rel="stylesheet">
+	<!-- Bootstrap CSS -->
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-	<header>
-		<h1>Таблица&#10000;</h1>
-		<hr />
-		<nav>
-			<a class="navigation non_active" href="/">&#9776;Главная&#9776;</a>
-			<a class="navigation active" href="/users">&#9776;Таблица&#9776;</a>
-			<a class="navigation non_active" href="/new_user">&#9776;Добавить ползьзователя&#9776;</a>
-		</nav>
-	</header>
-	<div class="section">
-		<div class="central">
-			<button type="submit" onClick="location.href='/new_user'">Добавить пользователя</button>
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<a class="navbar-brand" href="#">SQL Table</a>
+		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+			aria-controls="navbarSupportedContent" aria-expended="false" aria-label="Toggle navigation"><span
+				class="navbar-toggler-icon"></span></button>
+		</button>
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav mr-auto">
+				<li class="nav-item ">
+					<a href="/" class="nav-link">Главная</a>
+				</li>
+				<li class="nav-item active">
+					<a href="/users" class="nav-link">Таблица</a>
+				</li>
+				<li class="nav-item">
+					<a href="/new_user" class="nav-link">Добавление</a>
+				</li>
+			</ul>
 		</div>
-		<table>
-			<colgroup>
-				<col span="3" style="background:LightCyan">
-			</colgroup>
-			<tr>
-				<th class="Table_head">Id</th>
-				<th class="Table_head">Name</th>
-				<th class="Table_head">Email</th>
-				<th class="Table_head">Passsword</th>
-			</tr>
+	</nav>
+
+	<div class="container mt-3">
+		<a class="btn btn-secondary btn-lg btn-block " href="/new_user" role="button">Добавить пользователя</a>
+	</div>
+
+	<div class="container mt-3" id="tablediv">
+		<table class="table table-hover table-dark table-bordered">
+			<thead>
+			  <tr>
+				<th scope="col" class="ids">#id</th>
+				<th scope="col">Имя</th>
+				<th scope="col">e-mail</th>
+				<th scope="col">Пароль</th>
+			  </tr>
+			</thead>
 			<tbody>
 				<!--place for SQL data-->
 			</tbody>
-		</table>
 	</div>
-	<footer>
-		<div class="copy">&copy;Table</div>
-	</footer>
+	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+		crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+		crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+		crossorigin="anonymous"></script>
 </body>
 </html>
