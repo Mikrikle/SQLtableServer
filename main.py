@@ -48,11 +48,14 @@ def generate_response(request, method, url):
         data_parsed = data.split('&')
         name = data_parsed[0].split('=')[1]
         email = data_parsed[1].split('=')[1]
+        email = email.replace('%40', '@')
+
         password = data_parsed[2].split('=')[1]
         add_user(name, email, password)
 
     def add_user(name, email, password):
         global conn
+        print(name, email, password)
         cursor = conn.cursor()
         cursor.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
                        (name, email, password))
@@ -80,6 +83,7 @@ def generate_response(request, method, url):
         return (headers + body).encode()
     elif method == 'POST' and url[:4] == '/api':
         if url[4:] == '/add':
+            print('<api method add>')
             parse_post_newuser(request)
         else:
             print(url)

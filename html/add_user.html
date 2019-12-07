@@ -43,15 +43,18 @@
 			<form>
 				<div class="form-group">
 					<label for="name">Имя</label>
-					<input class="form-control" type="text" id="name" onkeyup="checkParams()" placeholder="Имя" autocomplete="off">
+					<input class="form-control" type="text" id="name" onkeyup="checkParams()" placeholder="Имя"
+						autocomplete="off">
 				</div>
 				<div class="form-group">
 					<label for="email">e-mail</label>
-					<input class="form-control" type="email" id="email" onkeyup="checkParams()" placeholder="name@example.com" autocomplete="off">
+					<input class="form-control" type="email" id="email" onkeyup="checkParams()"
+						placeholder="name@example.com" autocomplete="off">
 				</div>
 				<div class="form-group">
 					<label for="pas">Пароль.</label>
-					<input class="form-control" type="text" id="pas" onkeyup="checkParams()" placeholder="Пароль" autocomplete="off">
+					<input class="form-control" type="text" id="pas" onkeyup="checkParams()" placeholder="Пароль"
+						autocomplete="off">
 				</div>
 				<button class="btn btn-primary" id="submit" disabled>Добавить</button>
 			</form>
@@ -59,74 +62,6 @@
 		</div>
 	</div>
 
-	<script>
-			function checkParams() {
-				let name = $("#name").val();
-				let eml = $("#email").val();
-				let pas = $("#pas").val();
-				if (name.length > 3 && eml.length > 4 && pas.length > 3 && eml.indexOf("@") != -1) {
-					$('#submit').removeAttr('disabled');
-				} else {
-					$('#submit').attr('disabled', 'disabled');
-				}
-			}
-	</script>
-	
-	<script>
-		"use strict";
-		$(document).ready(function () {
-			$("#submit").click(function () {
-				let name = $("#name").val();
-				let eml = $("#email").val();
-				let pas = $("#pas").val();
-				$.ajax({
-					url: "/api/add",
-					type: "POST",
-					dataType: "text",
-					data: ("name=" + name + "&email=" + eml + "&pas=" + pas),
-					success: function go() {
-						location.href = '/users';
-					}
-				});
-			});
-		});
-	</script>
-
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-	crossorigin="anonymous"></script>
-	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-	crossorigin="anonymous"></script>
-</body>
-
-</html>
-
-<!--
-
-	<div class="container">
-		<div class="jumbotron">
-			<header>
-				<h1>Добавление пользователя</h1>
-			</header>
-			<form>
-				<div class="form-group">
-					<label for="name">Имя</label>
-					<input type="text" class="data form-control" id="name" placeholder="Имя" onkeyup="checkParams()" />
-				</div>
-				<div class="form-group">
-					<label for="email">Email</label>
-					<input type="email" class="data form-control" id="email" placeholder="name@example.com" onkeyup="checkParams()" />
-				</div>
-				<div class="form-group">
-					<label for="pas">Пароль</label>
-					<input type="text" class="data form-control" id="pas" placeholder="Пароль" onkeyup="checkParams()" />
-				</div>
-				<button class="btn btn-primary" id="submit">Добавить</button>
-				<button class="btn btn-secondary" onClick="location.href='/users'">Отмена</button>
-			</form>
-		</div>
-	</div>
 	<script>
 		function checkParams() {
 			let name = $("#name").val();
@@ -140,17 +75,6 @@
 		}
 	</script>
 
-<form method="post" action="" id="forma" name="">
-					<span class="data_name">Имя:</span>
-					<input class="data" id="name" onkeyup="checkParams()" type="text" placeholder="Введите имя" autocomplete="off" /><br>
-					<span class="data_name">Email:</span>
-					<input class="data" id="email" onkeyup="checkParams()" type="email" placeholder="Введите e-mail" autocomplete="off" /><br />
-					<span class="data_name">Пароль:</span>
-					<input class="data" id="pas" onkeyup="checkParams()" type="text" placeholder="Введите пароль" autocomplete="off" /><br />
-					<input class=".simple_btn" type="button" id="submit" value="Отправить" disabled>
-</form>
-				<button id="users" onClick="location.href='/users'">Отмена</button>
-
 	<script>
 		"use strict";
 		$(document).ready(function () {
@@ -158,54 +82,18 @@
 				let name = $("#name").val();
 				let eml = $("#email").val();
 				let pas = $("#pas").val();
-				$.ajax({
-					type: "POST",
-					url: "/api",
-					dataType: "text",
-					data: ("name=" + name + "&email=" + eml + "&pas=" + pas),
-					success: function go() {
-						location.href = '/users';
-					}
-				});
+				$.post("/api/add", { username: name, email: eml, password: pas} )
+					.always(function() { location.href="/users" });
 			});
 		});
 	</script>
 
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-	integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-	crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
-		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
-		crossorigin="anonymous"></script>
+	integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+	crossorigin="anonymous"></script>
 	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
-		integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
-		crossorigin="anonymous"></script>
+	integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+	crossorigin="anonymous"></script>
 </body>
-</html>
 
-		<article>
-		<div class="section">
-			<div class="central">
-				<form method="post" action="" id="forma" name="">
-					<span class="data_name">Имя:</span>
-					<input class="data" id="name" onkeyup="checkParams()" type="text" placeholder="Введите имя" autocomplete="off" /><br>
-					<span class="data_name">Email:</span>
-					<input class="data" id="email" onkeyup="checkParams()" type="email" placeholder="Введите e-mail" autocomplete="off" /><br />
-					<span class="data_name">Пароль:</span>
-					<input class="data" id="pas" onkeyup="checkParams()" type="text" placeholder="Введите пароль" autocomplete="off" /><br />
-					<input class=".simple_btn" type="button" id="submit" value="Отправить" disabled>
-				</form>
-				<button id="users" onClick="location.href='/users'">Отмена</button>
-			</div>
-		</div>
-		<div class="section">
-			<div class="central">
-				<h2>&#9672;Правила&#9672;</h2>
-				<p class="rules">&#9672;Логин должен состоять более чем из 6 символов.</p>
-				<p class="rules">&#9672;Следите за правильностью ввода адреса электронной почты.</p>
-				<p class="rules">&#9672;имя фамилию и отчество вводите через пробел.</p>
-				<p class="rules"><sub> Строго соблюдайте правила!</sub></p>
-			</div>
-		</div>
-	</article>
--->
+</html>
