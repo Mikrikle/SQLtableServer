@@ -18,7 +18,7 @@ def table():
     with open('html/table.html', 'r', encoding='utf-8') as f:
         begin_table = ''
         end_table = ''
-        for _ in range(54):
+        for _ in range(53):
             begin_table += f.readline()
         for _ in range(14):
             end_table += f.readline()
@@ -49,7 +49,6 @@ def generate_response(request, method, url):
         name = data_parsed[0].split('=')[1]
         email = data_parsed[1].split('=')[1]
         email = email.replace('%40', '@')
-
         password = data_parsed[2].split('=')[1]
         add_user(name, email, password)
 
@@ -91,9 +90,10 @@ def generate_response(request, method, url):
     else:
         return('HTTP/1.1 405 Method not allowed\n\n<h1>405</h1><p>Method not allowed</p>').encode()
 
+
 def main():
     def request_processing(request):
-        #print(request)
+        # print(request)
         if request != '':
             parsed = request.split(' ')
             try:
@@ -104,7 +104,7 @@ def main():
                 return generate_response(request, None, None)
         else:
             return generate_response(request, None, None)
-        
+
     def run():
         serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)

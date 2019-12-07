@@ -4,6 +4,7 @@ import sqlite3
 conn = sqlite3.connect("usersbase.db")
 cursor = conn.cursor()
 
+
 def create():
     # Создание таблицы  логин, почта, ФИО
     cursor.execute("""CREATE TABLE users 
