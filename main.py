@@ -20,14 +20,15 @@ def table():
         end_table = ''
         for _ in range(53):
             begin_table += f.readline()
-        for _ in range(14):
+        for _ in range(20):
             end_table += f.readline()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM users')
     for row in cursor:
         begin_table += '\t\t\t<tr>' + '<th scope="row" class="ids">' + \
             str(row[0]) + '</th>' + '<td>' + row[1] + '</td>' + \
-            '<td>' + row[2] + '</td>' + '<td>' + row[3] + '</td>' + '</tr>\n'
+            '<td>' + row[2] + '</td>' + '<td>' + row[3] + '</td>' + \
+            '<td class="del"><button type="button" class="btn btn-danger btn-sm">X</button></td>' + '</tr>\n'
     cursor.close()
     html_table = begin_table + end_table
     return html_table
@@ -43,7 +44,7 @@ def generate_response(request, method, url):
     }
     # API_____________________________
 
-    def parse_post_newuser(request):
+    def parse_newuser(request):
         data = request.split('\n')[-1]
         data_parsed = data.split('&')
         name = data_parsed[0].split('=')[1]
@@ -51,17 +52,39 @@ def generate_response(request, method, url):
         email = email.replace('%40', '@')
         password = data_parsed[2].split('=')[1]
         add_user(name, email, password)
-
     def add_user(name, email, password):
         global conn
-        print(name, email, password)
+        def id_generation():
+            f = open('logid.txt','r')
+            userid = f.read()
+            f.close()
+            userid = int(userid) + 1
+            f = open('logid.txt', 'w')
+            f.write(str(userid))
+            f.close()
+            return userid
+
+        userid = id_generation()
         cursor = conn.cursor()
-        cursor.execute("INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
-                       (name, email, password))
+        cursor.execute("INSERT INTO users (id, name, email, password) VALUES (?, ?, ?, ?)",
+                       (userid, name, email, password))
         conn.commit()
         cursor.close()
         print('< Добавлен новый пользователь >')
-
+        
+    def parse_delite(request):
+        data = request.split('\n')[-1]
+        user_id = data.split('=')[1]
+        delite_user(user_id)
+    def delite_user(user_id):
+        global conn
+        cursor = conn.cursor()
+        sql = 'DELETE FROM users WHERE id=?'
+        print('<',user_id,'>', end='')
+        cursor.execute(sql, (user_id,))
+        conn.commit()
+        cursor.close()
+        print('< удален пользователь >')
     # GET____________________________
     def generate_headers(url):
         if not url in URLS:
@@ -82,8 +105,11 @@ def generate_response(request, method, url):
         return (headers + body).encode()
     elif method == 'POST' and url[:4] == '/api':
         if url[4:] == '/add':
-            print('<api method add>')
-            parse_post_newuser(request)
+            print('<api method add>', end='')
+            parse_newuser(request)
+        elif  url[4:] == '/delite':
+            print('<api method delite>', end='')
+            parse_delite(request)
         else:
             print(url)
         return('HTTP/1.1 201 OK').encode()
@@ -93,7 +119,6 @@ def generate_response(request, method, url):
 
 def main():
     def request_processing(request):
-        # print(request)
         if request != '':
             parsed = request.split(' ')
             try:
@@ -115,7 +140,6 @@ def main():
         while True:
             client_socket, addr = serversocket.accept()
             request = client_socket.recv(1024)
-            print(request)
             try:
                 response = request_processing(request.decode('utf-8'))
                 client_socket.sendall(response)

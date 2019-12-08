@@ -53,12 +53,12 @@
 				</div>
 				<div class="form-group">
 					<label for="pas">Пароль.</label>
-					<input class="form-control" type="text" id="pas" onkeyup="checkParams()" placeholder="Пароль"
+					<input class="form-control" type="text" id="pas" onkeyup="checkParams()" placeholder="Пароль (более 3 символов)"
 						autocomplete="off">
 				</div>
-				<button class="btn btn-primary" id="submit" disabled>Добавить</button>
+				<button class="btn btn-primary mt-1" id="submit" onclick="SendPost()" disabled>Добавить</button>
 			</form>
-			<button class="btn btn-secondary" onClick="location.href='/users'">Отмена</button>
+			<button class="btn btn-secondary mt-3" onClick="location.href='/users'">Отмена</button>
 		</div>
 	</div>
 
@@ -67,7 +67,7 @@
 			let name = $("#name").val();
 			let eml = $("#email").val();
 			let pas = $("#pas").val();
-			if (name.length > 3 && eml.length > 4 && pas.length > 3 && eml.indexOf("@") != -1) {
+			if (name.length > 1 && eml.length > 3 && pas.length > 3 && eml.indexOf("@") != -1) {
 				$('#submit').removeAttr('disabled');
 			} else {
 				$('#submit').attr('disabled', 'disabled');
@@ -76,16 +76,13 @@
 	</script>
 
 	<script>
-		"use strict";
-		$(document).ready(function () {
-			$("#submit").click(function () {
-				let name = $("#name").val();
-				let eml = $("#email").val();
-				let pas = $("#pas").val();
-				$.post("/api/add", { username: name, email: eml, password: pas })
-					.always(function () { location.href = "/users" });
-			});
-		});
+		function SendPost() {
+			let name = $("#name").val();
+			let eml = $("#email").val();
+			let pas = $("#pas").val();
+			$.post("/api/add", { username: name, email: eml, password: pas })
+				.always(function () { location.href = "/users" });
+			}
 	</script>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"

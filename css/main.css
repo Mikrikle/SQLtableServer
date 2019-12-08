@@ -14,3 +14,9 @@ table{
 td{
 	word-wrap:break-word; 
 }
+.del{
+	width:50px;
+}
+.btn-sm{
+	width:25px;
+}

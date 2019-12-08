@@ -8,7 +8,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	<title>UsersT</title>
 	<link rel="stylesheet" href="../css/main.css">
-	<!-- Bootstrap CSS -->
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
 		integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
@@ -47,15 +47,31 @@
 					<th scope="col">Имя</th>
 					<th scope="col">e-mail</th>
 					<th scope="col">Пароль</th>
+					<th class="del"></th>
 				</tr>
 			</thead>
 			<tbody>
 				<!--place for SQL data-->
 			</tbody>
 	</div>
-	<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-		integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-		crossorigin="anonymous"></script>
+
+	<script>
+	$(function () {
+		$('.btn-danger').on('click', function () {
+		  let $btn = $(this),
+			  $td = $btn.parent();
+			  $tr = $td.parent();
+			  $id = $tr.find('th')
+			  let index = $id.text()
+			let isDelite = confirm("Вы действительно хотите удалить пользователя c id=" + index + " ?");
+			if(isDelite == true){
+				$.post("/api/delite", {id:index})
+					.always(function () { location.reload() });
+			}
+		});
+	  });
+	</script>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
 		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
 		crossorigin="anonymous"></script>
