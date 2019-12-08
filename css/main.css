@@ -14,9 +14,14 @@ table{
 td{
 	word-wrap:break-word; 
 }
-.del{
-	width:50px;
+.button-place, .btn-col{
+	width:80px;
+}
+.button-place{
+	display: flex;
+	justify-content:center;
 }
 .btn-sm{
-	width:25px;
+	margin: 5px;
+	width:30px;
 }

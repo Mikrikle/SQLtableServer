@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 
 <html lang="ru">
 
@@ -14,30 +14,10 @@
 </head>
 
 <body>
-	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-		<a class="navbar-brand" href="#">SQL Table</a>
-		<button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
-			aria-controls="navbarSupportedContent" aria-expended="false" aria-label="Toggle navigation"><span
-				class="navbar-toggler-icon"></span></button>
-		</button>
-		<div class="collapse navbar-collapse" id="navbarSupportedContent">
-			<ul class="navbar-nav mr-auto">
-				<li class="nav-item">
-					<a href="/" class="nav-link">Главная</a>
-				</li>
-				<li class="nav-item">
-					<a href="/users" class="nav-link">Таблица</a>
-				</li>
-				<li class="nav-item active">
-					<a href="/new_user" class="nav-link">Добавление</a>
-				</li>
-			</ul>
-		</div>
-	</nav>
 	<div class="container">
 		<div class="jumbotron">
 			<header>
-				<h1>Добавление пользователя</h1>
+				<h1>Редактирование</h1>
 			</header>
 
 			<form>
@@ -74,14 +54,15 @@
 			}
 		}
 	</script>
-
-	<script>
+    <script>
 		function SendPost() {
+            let strGET = window.location.search.replace( '?', '');
+            let userid = strGET.split('=')[1]
 			let name = $("#name").val();
 			let eml = $("#email").val();
 			let pas = $("#pas").val();
-			$.post("/api/add", { username: name, email: eml, password: pas })
-			window.location.href = "/users"
+			$.post("/api/redact", {id:userid, username: name, email: eml, password: pas })
+				.always(function () { window.location.href = "/users" });
 			}
 	</script>
 

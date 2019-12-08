@@ -11,16 +11,22 @@ with open('css/main.css', 'r', encoding='utf-8') as f:
 
 with open('html/root.html', 'r', encoding='utf-8') as f:
     root_html = f.read()
-
+    
+with open('html/r.html', 'r', encoding='utf-8') as f:
+    readress_html = f.read()
+    
+with open('html/redact_user.html', 'r', encoding='utf-8') as f:
+    redact_html = f.read()
+    
 # table
 def table():
     global conn
     with open('html/table.html', 'r', encoding='utf-8') as f:
         begin_table = ''
         end_table = ''
-        for _ in range(53):
+        for _ in range(54):
             begin_table += f.readline()
-        for _ in range(35):
+        for _ in range(50):
             end_table += f.readline()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM users')
@@ -28,7 +34,8 @@ def table():
         begin_table += '\t\t\t<tr>' + '<th scope="row" class="ids">' + \
             str(row[0]) + '</th>' + '<td>' + row[1] + '</td>' + \
             '<td>' + row[2] + '</td>' + '<td>' + row[3] + '</td>' + \
-            '<td class="del"><button type="button" class="btn btn-danger btn-sm">X</button></td>' + '</tr>\n'
+            '<td class="button-place"><button type="button" class="btn btn-danger btn-sm">&#10008;</button>' + \
+            '<button type="button" class="btn btn-info btn-sm">&#10000;</button></td>' '</tr>\n'
     cursor.close()
     html_table = begin_table + end_table
     return html_table
@@ -40,9 +47,12 @@ def generate_response(request, method, url):
         '/': root_html,
         '/users': table(),
         '/new_user': add_user_html,
+        '/new_user?':readress_html,
+        '/redact_user?':readress_html,
+        '/redact_user':redact_html,
         '/css/main.css': css,
     }
-    
+
     # API_____________________________
     def parse_newuser(request):
         data = request.split('\n')[-1]
@@ -52,10 +62,12 @@ def generate_response(request, method, url):
         email = email.replace('%40', '@')
         password = data_parsed[2].split('=')[1]
         add_user(name, email, password)
+
     def add_user(name, email, password):
         global conn
+
         def id_generation():
-            f = open('logid.txt','r')
+            f = open('logid.txt', 'r')
             userid = f.read()
             f.close()
             userid = int(userid) + 1
@@ -71,20 +83,42 @@ def generate_response(request, method, url):
         conn.commit()
         cursor.close()
         print('< Добавлен новый пользователь >')
-        
+
     def parse_delite(request):
         data = request.split('\n')[-1]
         user_id = data.split('=')[1]
         delite_user(user_id)
+
     def delite_user(user_id):
         global conn
         cursor = conn.cursor()
         sql = 'DELETE FROM users WHERE id=?'
-        print('<',user_id,'>', end='')
+        print('<', user_id, '>', end='')
         cursor.execute(sql, (user_id,))
         conn.commit()
         cursor.close()
         print('< удален пользователь >')
+        
+    def redact_user(user_id, name, email, password):
+        global conn
+        cursor = conn.cursor()
+        print('<', user_id, '>', end='')
+        sql ="""UPDATE users
+                       SET name = ?, email = ?, password = ?
+                        WHERE id = ?;"""
+        cursor.execute(sql, (name, email, password, user_id,))
+        conn.commit()
+        cursor.close()
+        print('< данные изменены >')
+    def parse_redact(request):
+        data = request.split('\n')[-1]
+        data_parsed = data.split('&')
+        userid = data_parsed[0].split('=')[1]
+        name = data_parsed[1].split('=')[1]
+        email = data_parsed[2].split('=')[1]
+        email = email.replace('%40', '@')
+        password = data_parsed[3].split('=')[1]
+        redact_user(userid, name, email, password)
         
     # GET____________________________
     def generate_headers(url):
@@ -101,16 +135,25 @@ def generate_response(request, method, url):
 
     # HTTP___________________________
     if method == 'GET':
-        headers, code = generate_headers(url)
-        body = generate_content(code, url)
-        return (headers + body).encode()
+        if url[:15] == '/redact_user?id':
+            
+            headers = 'HTTP/1.1 200 OK'
+            body = URLS['/redact_user']
+            return (headers + body).encode()
+        else:
+            headers, code = generate_headers(url)
+            body = generate_content(code, url)
+            return (headers + body).encode()
     elif method == 'POST' and url[:4] == '/api':
         if url[4:] == '/add':
             print('<api method add>', end='')
             parse_newuser(request)
-        elif  url[4:] == '/delite':
+        elif url[4:] == '/delite':
             print('<api method delite>', end='')
             parse_delite(request)
+        elif url[4:] == '/redact':
+            print('<api method redact>', end='')
+            parse_redact(request)
         else:
             print(url)
         return('HTTP/1.1 201 OK').encode()
@@ -125,6 +168,7 @@ def main():
             try:
                 method = parsed[0]
                 url = parsed[1]
+                print(url, method)
                 return generate_response(request, method, url)
             except:
                 return generate_response(request, None, None)
@@ -142,10 +186,9 @@ def main():
             client_socket, addr = serversocket.accept()
             request = client_socket.recv(1024)
             try:
+                print('<--ОК-->', addr, end=' ')
                 response = request_processing(request.decode('utf-8'))
                 client_socket.sendall(response)
-                print('<--ОК-->', addr, end=' ')
-                print(request.decode('utf-8')[:4])
             except:
                 print('<--ОШИБКА-->')
             client_socket.close()
