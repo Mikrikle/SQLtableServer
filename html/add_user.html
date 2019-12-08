@@ -52,7 +52,7 @@
 						placeholder="name@example.com" autocomplete="off">
 				</div>
 				<div class="form-group">
-					<label for="pas">Пароль.</label>
+					<label for="pas">Пароль</label>
 					<input class="form-control" type="text" id="pas" onkeyup="checkParams()" placeholder="Пароль (более 3 символов)"
 						autocomplete="off">
 				</div>
@@ -81,7 +81,7 @@
 			let eml = $("#email").val();
 			let pas = $("#pas").val();
 			$.post("/api/add", { username: name, email: eml, password: pas })
-				.always(function () { location.href = "/users" });
+				.always(function () { window.location.href = "/users" });
 			}
 	</script>
 

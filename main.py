@@ -20,7 +20,7 @@ def table():
         end_table = ''
         for _ in range(53):
             begin_table += f.readline()
-        for _ in range(20):
+        for _ in range(35):
             end_table += f.readline()
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM users')
@@ -42,8 +42,8 @@ def generate_response(request, method, url):
         '/new_user': add_user_html,
         '/css/main.css': css,
     }
+    
     # API_____________________________
-
     def parse_newuser(request):
         data = request.split('\n')[-1]
         data_parsed = data.split('&')
@@ -85,6 +85,7 @@ def generate_response(request, method, url):
         conn.commit()
         cursor.close()
         print('< удален пользователь >')
+        
     # GET____________________________
     def generate_headers(url):
         if not url in URLS:
