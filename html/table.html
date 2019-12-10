@@ -56,33 +56,43 @@
 	</div>
 
 	<script>
-	$(function () {
-		$('.btn-danger').on('click', function () {
-		  let $btn = $(this),
-			  $td = $btn.parent();
-			  $tr = $td.parent();
-			  $id = $tr.find('th')
-			  let index = $id.text()
-			let isDelite = confirm("Вы действительно хотите удалить пользователя c id=" + index + " ?");
-			if(isDelite == true){
-				$.post("/api/delite", {id:index})
-					.always(function () { location.reload() });
-			}
+		$(function () {
+			$('.btn-danger').on('click', function () {
+				var $btn = $(this),
+					$td = $btn.parent();
+				$tr = $td.parent();
+				$id = $tr.find('th')
+				var index = $id.text()
+				var isDelite = confirm("Вы действительно хотите удалить пользователя c id=" + index + " ?");
+				if (isDelite == true) {
+					var xhr = new XMLHttpRequest();
+					var json = JSON.stringify({ id: index });
+					xhr.open('DELITE', '/api/delite', true);
+					xhr.setRequestHeader('Content-type', 'application/json; charset=utf-8');
+					xhr.send(json);
+					location.reload();
+				}
+			});
 		});
-	  });
 	</script>
+
 	<script>
 		$(function () {
 			$('.btn-info').on('click', function () {
-			  let $btn = $(this),
-				  $td = $btn.parent();
-				  $tr = $td.parent();
-				  $id = $tr.find('th')
-				  let index = $id.text()
-				  window.location.href = "/redact_user?"+"id=" + index
+				var $btn = $(this),
+					$td = $btn.parent();
+				$tr = $td.parent();
+				$id = $tr.find('th');
+				$n = $tr.find('.name'); var name = $n.text();
+				$e = $tr.find('.email'); var emai = $e.text();
+				$p = $tr.find('.password'); var password = $p.text();
+				var index = $id.text();
+				window.location.href = "/redact_user?" + "id=" + index + "&name=" + name +
+					"&email=" + emai + "&password=" + password
 			});
-		  });
-		</script>
+		});
+	</script>
+
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
 		integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
 		crossorigin="anonymous"></script>

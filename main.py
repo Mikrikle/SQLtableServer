@@ -1,6 +1,6 @@
 import sqlite3
 import socket
-
+import json
 
 # files
 with open('html/add_user.html', 'r', encoding='utf-8') as f:
@@ -11,14 +11,14 @@ with open('css/main.css', 'r', encoding='utf-8') as f:
 
 with open('html/root.html', 'r', encoding='utf-8') as f:
     root_html = f.read()
-    
+
 with open('html/r.html', 'r', encoding='utf-8') as f:
     readress_html = f.read()
-    
+
 with open('html/redact_user.html', 'r', encoding='utf-8') as f:
     redact_html = f.read()
-    
-# table
+
+
 def table():
     global conn
     with open('html/table.html', 'r', encoding='utf-8') as f:
@@ -32,35 +32,34 @@ def table():
     cursor.execute('SELECT * FROM users')
     for row in cursor:
         begin_table += '\t\t\t<tr>' + '<th scope="row" class="ids">' + \
-            str(row[0]) + '</th>' + '<td>' + row[1] + '</td>' + \
-            '<td>' + row[2] + '</td>' + '<td>' + row[3] + '</td>' + \
+            str(row[0]) + '</th>' + '<td class="name">' + row[1] + '</td>' + \
+            '<td class="email">' + row[2] + '</td>' + '<td class="password">' + row[3] + '</td>' + \
             '<td class="button-place"><button type="button" class="btn btn-danger btn-sm">&#10008;</button>' + \
             '<button type="button" class="btn btn-info btn-sm">&#10000;</button></td>' '</tr>\n'
     cursor.close()
     html_table = begin_table + end_table
     return html_table
 
-# answer
+
 def generate_response(request, method, url):
         # url:body
     URLS = {
         '/': root_html,
         '/users': table(),
         '/new_user': add_user_html,
-        '/new_user?':readress_html,
-        '/redact_user?':readress_html,
-        '/redact_user':redact_html,
+        '/redact_user': redact_html,
         '/css/main.css': css,
+        'return': readress_html
     }
 
     # API_____________________________
+    # __ADD
     def parse_newuser(request):
         data = request.split('\n')[-1]
-        data_parsed = data.split('&')
-        name = data_parsed[0].split('=')[1]
-        email = data_parsed[1].split('=')[1]
-        email = email.replace('%40', '@')
-        password = data_parsed[2].split('=')[1]
+        j = json.loads(data)
+        name = j["name"]
+        email = j["email"]
+        password = j["password"]
         add_user(name, email, password)
 
     def add_user(name, email, password):
@@ -84,9 +83,11 @@ def generate_response(request, method, url):
         cursor.close()
         print('< Добавлен новый пользователь >')
 
+    # __DELITE
     def parse_delite(request):
         data = request.split('\n')[-1]
-        user_id = data.split('=')[1]
+        j = json.loads(data)
+        user_id = j["id"]
         delite_user(user_id)
 
     def delite_user(user_id):
@@ -98,28 +99,29 @@ def generate_response(request, method, url):
         conn.commit()
         cursor.close()
         print('< удален пользователь >')
-        
+
+    # __REDACT
+    def parse_redact(request):
+        data = request.split('\n')[-1]
+        j = json.loads(data)
+        userid = j['id']
+        name = j['name']
+        email = j['email']
+        password = j['password']
+        redact_user(userid, name, email, password)
+
     def redact_user(user_id, name, email, password):
         global conn
         cursor = conn.cursor()
         print('<', user_id, '>', end='')
-        sql ="""UPDATE users
+        sql = """UPDATE users
                        SET name = ?, email = ?, password = ?
                         WHERE id = ?;"""
         cursor.execute(sql, (name, email, password, user_id,))
         conn.commit()
         cursor.close()
         print('< данные изменены >')
-    def parse_redact(request):
-        data = request.split('\n')[-1]
-        data_parsed = data.split('&')
-        userid = data_parsed[0].split('=')[1]
-        name = data_parsed[1].split('=')[1]
-        email = data_parsed[2].split('=')[1]
-        email = email.replace('%40', '@')
-        password = data_parsed[3].split('=')[1]
-        redact_user(userid, name, email, password)
-        
+
     # GET____________________________
     def generate_headers(url):
         if not url in URLS:
@@ -136,27 +138,29 @@ def generate_response(request, method, url):
     # HTTP___________________________
     if method == 'GET':
         if url[:15] == '/redact_user?id':
-            
             headers = 'HTTP/1.1 200 OK'
             body = URLS['/redact_user']
+            return (headers + body).encode()
+        elif '?' in url:
+            headers = 'HTTP/1.1 200 OK'
+            body = URLS['return']
             return (headers + body).encode()
         else:
             headers, code = generate_headers(url)
             body = generate_content(code, url)
             return (headers + body).encode()
-    elif method == 'POST' and url[:4] == '/api':
-        if url[4:] == '/add':
-            print('<api method add>', end='')
-            parse_newuser(request)
-        elif url[4:] == '/delite':
-            print('<api method delite>', end='')
-            parse_delite(request)
-        elif url[4:] == '/redact':
-            print('<api method redact>', end='')
-            parse_redact(request)
-        else:
-            print(url)
-        return('HTTP/1.1 201 OK').encode()
+    if method == 'PUT' and url[:8] == '/api/add':
+        print('<api method add>', end='')
+        parse_newuser(request)
+        return('HTTP/1.1 200 OK').encode()
+    elif method == 'DELITE' and url[:11] == '/api/delite':
+        print('<api method delite>', end='')
+        parse_delite(request)
+        return('HTTP/1.1 200 OK').encode()
+    elif method == 'POST' and url[:11] == '/api/redact':
+        print('<api method redact>', end='')
+        parse_redact(request)
+        return('HTTP/1.1 200 OK').encode()
     else:
         return('HTTP/1.1 405 Method not allowed\n\n<h1>405</h1><p>Method not allowed</p>').encode()
 
